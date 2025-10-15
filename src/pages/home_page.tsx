@@ -1,5 +1,5 @@
-import React, { JSX, useState } from "react";
-import { Menu, Search, Mic, Trophy, Dice3, Tv, Gift } from "lucide-react";
+import { JSX, useState } from "react";
+import { Menu, Search, Mic, Trophy, Tv } from "lucide-react";
 
 interface Match {
     league: string;
