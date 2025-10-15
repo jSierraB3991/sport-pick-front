@@ -85,7 +85,7 @@ export const HomePage = (): JSX.Element => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 max-w-[1400px] mx-auto">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 mx-auto">
             {/* Header */}
             <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 sm:px-6 lg:px-8 py-3 shadow-xl">
                 <div className="flex items-center justify-between mb-4">
