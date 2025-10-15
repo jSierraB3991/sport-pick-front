@@ -1,5 +1,7 @@
 import { JSX, useState } from "react";
-import { Menu, Search, Mic, Trophy, Tv } from "lucide-react";
+import { Trophy, Tv } from "lucide-react";
+import FooterComponent from "../components/footer_component";
+import HeaderComponent from "../components/header_component";
 
 interface Match {
     league: string;
@@ -87,34 +89,7 @@ export const HomePage = (): JSX.Element => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 mx-auto">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 sm:px-6 lg:px-8 py-3 shadow-xl">
-                <div className="flex items-center justify-between mb-4">
-                    <Menu className="w-6 h-6 text-white cursor-pointer hover:text-orange-400 transition-colors" />
-                    <div className="text-2xl sm:text-3xl font-bold">
-                        <span className="text-white">Game </span>
-                        <span className="text-white">Funded</span>
-                    </div>
-                    <div className="flex gap-2">
-                        <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
-                            Register
-                        </button>
-                        <button className="text-white px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium hover:text-orange-400 transition-colors hidden sm:block">
-                            Login
-                        </button>
-                    </div>
-                </div>
-
-                {/* Search Bar */}
-                <div className="relative max-w-2xl mx-auto">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="w-full bg-slate-800/50 backdrop-blur-sm text-white placeholder-slate-400 rounded-full py-2.5 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 border border-slate-700"
-                    />
-                    <Mic className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer hover:text-orange-400 transition-colors" />
-                </div>
-            </div>
+            <HeaderComponent />
 
             {/* Navigation Icons */}
             <div className="bg-white px-2 sm:px-4 lg:px-8 py-4 flex border-b border-slate-200 overflow-x-auto shadow-sm">
@@ -354,48 +329,7 @@ export const HomePage = (): JSX.Element => {
             </div>
 
             {/* Footer */}
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white px-4 sm:px-6 lg:px-8 py-8 mt-6">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className="w-6 h-4 bg-slate-700 rounded"></div>
-                        <span className="text-sm">English</span>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-4 mb-4 text-xs sm:text-sm">
-                        <a
-                            href="#"
-                            className="hover:text-orange-400 transition-colors"
-                        >
-                            Payment methods
-                        </a>
-                        <a
-                            href="#"
-                            className="hover:text-orange-400 transition-colors"
-                        >
-                            Terms & conditions
-                        </a>
-                    </div>
-                    <div className="text-xs sm:text-sm text-slate-400 text-center mb-4 max-w-2xl mx-auto">
-                        We use cookies and third party cookies to improve our
-                        services, analyse and personalise your preferences and
-                        to show you advertisements.
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-4 mb-4">
-                        <div className="text-xs sm:text-sm border border-orange-500 text-orange-400 rounded-full px-2 py-1">
-                            18+
-                        </div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-xl sm:text-2xl font-bold mb-2">
-                            <span className="text-white">Game </span>
-                            <span className="text-white">Funded</span>
-                            <span className="text-white">.</span>
-                        </div>
-                        <p className="text-xs text-slate-400">
-                            Betco. © 2025 All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <FooterComponent />
         </div>
     );
 };
