@@ -106,49 +106,20 @@ export const HomePage = (): JSX.Element => {
             {/* Hero Banner */}
             <div className="bg-gradient-to-r from-teal-500 via-teal-600 to-cyan-600 p-6 sm:p-8 lg:p-12 relative overflow-hidden shadow-xl">
                 <div className="relative z-10 max-w-xl">
-                    <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold mb-1">
-                        Double Odds On
-                    </h2>
-                    <h3 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                        Goalscorer Bets
-                    </h3>
-                    <p className="text-white text-sm sm:text-base opacity-90">
-                        if he scores two or more
-                    </p>
+                    <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold mb-1">Double Odds On</h2>
+                    <h3 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Goalscorer Bets</h3>
+                    <p className="text-white text-sm sm:text-base opacity-90">if he scores two or more</p>
                 </div>
                 <div className="absolute right-2 sm:right-4 lg:right-12 top-1/2 transform -translate-y-1/2">
                     <div className="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                        <div className="text-4xl sm:text-6xl lg:text-7xl">
-                            ⚽
-                        </div>
+                        <div className="text-4xl sm:text-6xl lg:text-7xl">⚽</div>
                     </div>
                 </div>
                 <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-20 hidden sm:block">
                     <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <line
-                            x1="0"
-                            y1="50"
-                            x2="100"
-                            y2="50"
-                            stroke="white"
-                            strokeWidth="2"
-                        />
-                        <line
-                            x1="50"
-                            y1="0"
-                            x2="50"
-                            y2="100"
-                            stroke="white"
-                            strokeWidth="2"
-                        />
-                        <circle
-                            cx="50"
-                            cy="50"
-                            r="15"
-                            fill="none"
-                            stroke="white"
-                            strokeWidth="2"
-                        />
+                        <line x1="0" y1="50" x2="100" y2="50" stroke="white" strokeWidth="2" />
+                        <line x1="50" y1="0" x2="50" y2="100" stroke="white" strokeWidth="2" />
+                        <circle cx="50" cy="50" r="15" fill="none" stroke="white" strokeWidth="2" />
                     </svg>
                 </div>
             </div>
@@ -156,40 +127,23 @@ export const HomePage = (): JSX.Element => {
             {/* Live Scores */}
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 space-y-3 shadow-sm">
                 {liveScores.map((match, idx) => (
-                    <div
-                        key={idx}
-                        className="flex items-center justify-between hover:bg-slate-50 p-2 rounded-lg transition-colors"
-                    >
+                    <div key={idx} className="flex items-center justify-between hover:bg-slate-50 p-2 rounded-lg transition-colors">
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <div className="text-xl sm:text-2xl flex-shrink-0">
-                                {match.homeLogo}
-                            </div>
+                            <div className="text-xl sm:text-2xl flex-shrink-0">{match.homeLogo}</div>
                             <div className="flex flex-col min-w-0">
-                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">
-                                    {match.home}
-                                </span>
+                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">{match.home}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 flex-shrink-0">
-                            <span className="text-xl sm:text-2xl font-bold text-slate-900">
-                                {match.scoreHome}
-                            </span>
-                            <span className="text-xl sm:text-2xl font-bold text-slate-400">
-                                :
-                            </span>
-                            <span className="text-xl sm:text-2xl font-bold text-slate-900">
-                                {match.scoreAway}
-                            </span>
+                            <span className="text-xl sm:text-2xl font-bold text-slate-900">{match.scoreHome}</span>
+                            <span className="text-xl sm:text-2xl font-bold text-slate-400">:</span>
+                            <span className="text-xl sm:text-2xl font-bold text-slate-900">{match.scoreAway}</span>
                         </div>
                         <div className="flex items-center gap-2 flex-1 justify-end min-w-0">
                             <div className="flex flex-col items-end min-w-0">
-                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">
-                                    {match.away}
-                                </span>
+                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">{match.away}</span>
                             </div>
-                            <div className="text-xl sm:text-2xl flex-shrink-0">
-                                {match.awayLogo}
-                            </div>
+                            <div className="text-xl sm:text-2xl flex-shrink-0">{match.awayLogo}</div>
                         </div>
                     </div>
                 ))}
@@ -200,21 +154,15 @@ export const HomePage = (): JSX.Element => {
                 <button
                     onClick={() => setActiveTab("highlights")}
                     className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-                        activeTab === "highlights"
-                            ? "text-teal-600 border-b-2 border-teal-600"
-                            : "text-slate-500 hover:text-slate-700"
-                    }`}
-                >
+                        activeTab === "highlights" ? "text-teal-600 border-b-2 border-teal-600" : "text-slate-500 hover:text-slate-700"
+                    }`}>
                     Highlights
                 </button>
                 <button
                     onClick={() => setActiveTab("upcoming")}
                     className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-                        activeTab === "upcoming"
-                            ? "text-teal-600 border-b-2 border-teal-600"
-                            : "text-slate-500 hover:text-slate-700"
-                    }`}
-                >
+                        activeTab === "upcoming" ? "text-teal-600 border-b-2 border-teal-600" : "text-slate-500 hover:text-slate-700"
+                    }`}>
                     Upcoming
                 </button>
             </div>
@@ -227,8 +175,7 @@ export const HomePage = (): JSX.Element => {
                         activeSport === "soccer"
                             ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
                             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                >
+                    }`}>
                     ⚽ Soccer
                 </button>
                 <button
@@ -237,8 +184,7 @@ export const HomePage = (): JSX.Element => {
                         activeSport === "basketball"
                             ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
                             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                >
+                    }`}>
                     🏀 Basketball
                 </button>
                 <button
@@ -247,8 +193,7 @@ export const HomePage = (): JSX.Element => {
                         activeSport === "tennis"
                             ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
                             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                >
+                    }`}>
                     🎾 Tennis
                 </button>
             </div>
@@ -257,46 +202,26 @@ export const HomePage = (): JSX.Element => {
             <div className="px-4 sm:px-6 lg:px-8 py-2 space-y-3">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     {matches.map((match, idx) => (
-                        <div
-                            key={idx}
-                            className="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border border-slate-200"
-                        >
+                        <div key={idx} className="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border border-slate-200">
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-2 flex-1 min-w-0">
                                     <div className="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></div>
-                                    <span className="text-xs text-slate-600 truncate font-medium">
-                                        {match.league}
-                                    </span>
+                                    <span className="text-xs text-slate-600 truncate font-medium">{match.league}</span>
                                 </div>
-                                <span className="text-xs font-semibold text-orange-600 whitespace-nowrap ml-2">
-                                    {match.time}
-                                </span>
+                                <span className="text-xs font-semibold text-orange-600 whitespace-nowrap ml-2">{match.time}</span>
                             </div>
                             <div className="flex items-center justify-between gap-2">
                                 <div className="flex-1 min-w-0">
-                                    <div className="font-semibold text-sm mb-1 truncate text-slate-800">
-                                        {match.home}
-                                    </div>
-                                    <div className="font-semibold text-sm truncate text-slate-800">
-                                        {match.away}
-                                    </div>
+                                    <div className="font-semibold text-sm mb-1 truncate text-slate-800">{match.home}</div>
+                                    <div className="font-semibold text-sm truncate text-slate-800">{match.away}</div>
                                 </div>
                                 <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                                     {match.odds.map((odd, i) => (
                                         <button
                                             key={i}
-                                            className="bg-slate-100 hover:bg-gradient-to-br hover:from-teal-50 hover:to-cyan-50 hover:border-teal-300 border border-slate-200 px-2 sm:px-4 py-2 rounded-lg text-sm font-bold min-w-[50px] sm:min-w-[60px] transition-all"
-                                        >
-                                            <div className="text-xs text-slate-500 mb-0.5">
-                                                {i === 0
-                                                    ? "1"
-                                                    : i === 1
-                                                    ? "X"
-                                                    : "2"}
-                                            </div>
-                                            <div className="text-slate-900">
-                                                {odd}
-                                            </div>
+                                            className="bg-slate-100 hover:bg-gradient-to-br hover:from-teal-50 hover:to-cyan-50 hover:border-teal-300 border border-slate-200 px-2 sm:px-4 py-2 rounded-lg text-sm font-bold min-w-[50px] sm:min-w-[60px] transition-all">
+                                            <div className="text-xs text-slate-500 mb-0.5">{i === 0 ? "1" : i === 1 ? "X" : "2"}</div>
+                                            <div className="text-slate-900">{odd}</div>
                                         </button>
                                     ))}
                                 </div>
@@ -308,21 +233,14 @@ export const HomePage = (): JSX.Element => {
 
             {/* Top Leagues Section */}
             <div className="px-4 sm:px-6 lg:px-8 py-4">
-                <h3 className="text-lg sm:text-xl font-bold mb-4 text-slate-800">
-                    Top League
-                </h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-4 text-slate-800">Top League</h3>
                 <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-5 gap-3">
                     {topLeagues.map((league, idx) => (
                         <button
                             key={idx}
-                            className="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-xl flex flex-col items-center gap-2 transition-all hover:scale-105 border border-slate-200"
-                        >
-                            <div className="text-2xl sm:text-3xl">
-                                {league.icon}
-                            </div>
-                            <span className="text-xs text-center font-medium text-slate-700">
-                                {league.name}
-                            </span>
+                            className="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-xl flex flex-col items-center gap-2 transition-all hover:scale-105 border border-slate-200">
+                            <div className="text-2xl sm:text-3xl">{league.icon}</div>
+                            <span className="text-xs text-center font-medium text-slate-700">{league.name}</span>
                         </button>
                     ))}
                 </div>
