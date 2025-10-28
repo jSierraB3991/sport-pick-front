@@ -1,5 +1,6 @@
 import { Menu, Search, Mic } from "lucide-react";
 import { JSX } from "react";
+import { Link } from "react-router-dom";
 
 const HeaderComponent = (): JSX.Element => {
     return (
@@ -15,9 +16,12 @@ const HeaderComponent = (): JSX.Element => {
                         <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
                             Register
                         </button>
-                        <button className="text-white px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium hover:text-orange-400 transition-colors hidden sm:block">
-                            Login
-                        </button>
+                        <Link
+                            className="block w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
+                            to="/login"
+                        >
+                            Ir a Login
+                        </Link>
                     </div>
                 </div>
 
