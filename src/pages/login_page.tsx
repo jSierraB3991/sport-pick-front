@@ -22,10 +22,7 @@ const LoginPage: React.FC = () => {
         try {
             setIsLoading(true);
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            console.log(email, password, rememberMe);
-
             const dataApiRes = await LoginApi({ email, password, rememberMe });
-            console.log("Respuesta del API:", dataApiRes);
             const dasshboardRoute = dataApiRes.role == "ADMIN" ? "/admin/home" : "/dashboard/user";
             navigate(dasshboardRoute);
         } catch (error) {
@@ -41,6 +38,7 @@ const LoginPage: React.FC = () => {
                 title: "Error de autenticación",
                 message: message,
                 duration: 0,
+                isShowRecharge: false,
             });
             setPassword("");
         } finally {

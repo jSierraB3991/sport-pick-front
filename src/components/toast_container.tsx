@@ -58,7 +58,7 @@ const ToastContainer: React.FC = () => {
                         {/* Actions */}
                         <div className="flex-shrink-0 flex gap-1">
                             {/* Reload Button */}
-                            {toast.type === "info" && (
+                            {toast.isShowRecharge && (
                                 <button onClick={handleReload} className="p-1.5 hover:bg-white/20 rounded-lg transition-colors" title="Recargar página">
                                     <RefreshCw className="w-4 h-4" />
                                 </button>

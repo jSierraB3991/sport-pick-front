@@ -4,6 +4,7 @@ import HomePage from "./pages/home_page";
 import LoginPage from "./pages/login_page";
 import { ToastProvider } from "./contexts/tast_contexts";
 import ToastContainer from "./components/toast_container";
+import RegisterPage from "./pages/register_page";
 
 function App() {
     const RouterComponent = BrowserRouter;
@@ -18,7 +19,7 @@ function App() {
                         <Route path="/home" element={<HomePage />} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} />
-                    {/*<Route path="/register" element={<RegisterPage />} />*/}
+                    <Route path="/register" element={<RegisterPage />} />
 
                     {/* User Dashboard Routes */}
                     <Route path="/user">

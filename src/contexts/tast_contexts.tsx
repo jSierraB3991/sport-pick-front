@@ -6,6 +6,7 @@ interface Toast {
     title: string;
     message: string;
     duration?: number;
+    isShowRecharge?: boolean;
 }
 
 interface ToastContextType {
@@ -16,9 +17,7 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [toasts, setToasts] = useState<Toast[]>([]);
 
     const showToast = useCallback((toast: Omit<Toast, "id">) => {
@@ -39,11 +38,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, []);
 
-    return (
-        <ToastContext.Provider value={{ toasts, showToast, removeToast }}>
-            {children}
-        </ToastContext.Provider>
-    );
+    return <ToastContext.Provider value={{ toasts, showToast, removeToast }}>{children}</ToastContext.Provider>;
 };
 
 export const useToast = () => {

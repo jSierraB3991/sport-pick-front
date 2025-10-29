@@ -1,7 +1,11 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { Trophy, Tv } from "lucide-react";
 import FooterComponent from "../components/footer_component";
 import HeaderComponent from "../components/header_component";
+import { BetDataSportsApi } from "../api/bet_data_api";
+import { useToast } from "../contexts/tast_contexts";
+import { BetDataHome, PpalLeagues, PPalLeaguesByCountry } from "../models/bet_dat_models";
+import GetSportIcon from "../components/icons_sport";
 
 interface Match {
     league: string;
@@ -27,11 +31,20 @@ interface League {
 }
 
 type TabType = "highlights" | "upcoming";
-type SportType = "soccer" | "basketball" | "tennis";
 
 export const HomePage = (): JSX.Element => {
+    const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>("highlights");
-    const [activeSport, setActiveSport] = useState<SportType>("soccer");
+
+    const [activeSport, setActiveSport] = useState("football");
+    const [countryLeagues, setCountryLeagues] = useState("");
+    const [pPlaLeague, setPPalLeague] = useState("");
+    const [query, setQuery] = useState("");
+
+    const [spoortOdds, setSportdds] = useState<BetDataHome[]>([]);
+    const [ppalLeaguesByCountry, setPpalLeguesByCountry] = useState<PPalLeaguesByCountry[]>([]);
+    const [ppalLeagues, setPpalLegues] = useState<PpalLeagues[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const matches: Match[] = [
         {
@@ -86,11 +99,45 @@ export const HomePage = (): JSX.Element => {
         { name: "Champions", icon: "⭐" },
     ];
 
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const betDataApi = await BetDataSportsApi();
+            setSportdds(betDataApi);
+            setPpalLeguesByCountry(betDataApi.filter((bd) => bd.term_key == activeSport).map((bd) => bd.ppal_leagues_by_country)[0]);
+        } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
+            showToast({
+                type: "error",
+                title: "Error al buscar las posibles apuestas",
+                message: message,
+                duration: 0,
+                isShowRecharge: true,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    useEffect(() => {
+        if (query != "" && query.length > 3) {
+            console.log(query);
+        }
+    }, [query]);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 mx-auto">
             {/* Header */}
-            <HeaderComponent />
-
+            <HeaderComponent loading={isLoading} userType="public" showSearchBar={true} setSearch={setQuery} />
             {/* Navigation Icons */}
             <div className="bg-white px-2 sm:px-4 lg:px-8 py-4 flex border-b border-slate-200 overflow-x-auto shadow-sm">
                 <button className="flex flex-col items-center gap-1 min-w-[60px] text-slate-700 hover:text-teal-600 transition-colors">
@@ -169,33 +216,62 @@ export const HomePage = (): JSX.Element => {
 
             {/* Sports Filter */}
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
-                <button
-                    onClick={() => setActiveSport("soccer")}
-                    className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
-                        activeSport === "soccer"
-                            ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
-                            : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}>
-                    ⚽ Soccer
-                </button>
-                <button
-                    onClick={() => setActiveSport("basketball")}
-                    className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
-                        activeSport === "basketball"
-                            ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
-                            : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}>
-                    🏀 Basketball
-                </button>
-                <button
-                    onClick={() => setActiveSport("tennis")}
-                    className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
-                        activeSport === "tennis"
-                            ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
-                            : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}>
-                    🎾 Tennis
-                </button>
+                {spoortOdds !== null &&
+                    spoortOdds.length > 0 &&
+                    spoortOdds.map((sp) => (
+                        <button
+                            onClick={() => {
+                                setActiveSport(sp.term_key);
+                                setPpalLeguesByCountry(sp.ppal_leagues_by_country);
+                            }}
+                            className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
+                                activeSport === sp.term_key
+                                    ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                            }`}>
+                            {GetSportIcon(sp.term_key)} {sp.name}
+                        </button>
+                    ))}
+            </div>
+
+            {/* Sports Filter */}
+            <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
+                {ppalLeaguesByCountry !== null &&
+                    ppalLeaguesByCountry.length > 0 &&
+                    ppalLeaguesByCountry.map((sp) => (
+                        <button
+                            onClick={() => {
+                                setCountryLeagues(sp.term_key);
+                                if (sp.ppal_leagues !== null) {
+                                    setPpalLegues(sp.ppal_leagues);
+                                } else {
+                                    setPpalLegues([]);
+                                }
+                            }}
+                            className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
+                                countryLeagues === sp.term_key
+                                    ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                            }`}>
+                            {GetSportIcon(sp.term_key)} {sp.contry_name}
+                        </button>
+                    ))}
+            </div>
+            {/* Sports Filter */}
+            <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
+                {ppalLeagues !== null &&
+                    ppalLeagues.length > 0 &&
+                    ppalLeagues.map((sp) => (
+                        <button
+                            onClick={() => setPPalLeague(sp.term_key)}
+                            className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
+                                pPlaLeague === sp.term_key
+                                    ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                            }`}>
+                            {GetSportIcon(sp.term_key)} {sp.name}
+                        </button>
+                    ))}
             </div>
 
             {/* Matches List */}
