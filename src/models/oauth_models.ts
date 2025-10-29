@@ -26,14 +26,6 @@ export interface UserLogin {
     rememberMe?: boolean;
 }
 
-export interface UserLoginResponse {
-    access_token: string;
-    expired_in: number;
-    is_two_factor: boolean;
-    refresh_token: string;
-    role: string;
-}
-
 export interface UserLoginTwoFactor {
     email: string;
     code: string;
@@ -41,18 +33,13 @@ export interface UserLoginTwoFactor {
 }
 
 export interface UserRegister {
-    email: string;
-    password: string;
-    confirm_password: string;
     first_name: string;
     last_name: string;
-    country: string;
-    countryId: number;
+    email: string;
+    password: string;
+    country_id?: number;
+    indicative?: string;
     cellphone: string;
-    gender: string;
-    callingCode: string;
-    parent_code: string;
-    parent_leg: string;
 }
 
 export interface UserUpdate {

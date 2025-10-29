@@ -1,9 +1,11 @@
 // pages/auth/Login.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginApi } from "../api/oauth";
 import { useToast } from "../contexts/tast_contexts";
+import { getRoleUser, getToken, saveDataUser } from "../libs/token_data";
+import { ROLE_ADMIN, ROUTE_ADMIN_HOME, ROUTE_USER_HOME } from "../libs/constants";
 
 const LoginPage: React.FC = () => {
     const { showToast } = useToast();
@@ -23,7 +25,8 @@ const LoginPage: React.FC = () => {
             setIsLoading(true);
             await new Promise((resolve) => setTimeout(resolve, 1000));
             const dataApiRes = await LoginApi({ email, password, rememberMe });
-            const dasshboardRoute = dataApiRes.role == "ADMIN" ? "/admin/home" : "/dashboard/user";
+            saveDataUser(dataApiRes);
+            const dasshboardRoute = dataApiRes.role == "ADMIN" ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
             navigate(dasshboardRoute);
         } catch (error) {
             let message = "";
@@ -45,6 +48,14 @@ const LoginPage: React.FC = () => {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        const token = getToken();
+        if (token !== "") {
+            const dasshboardRoute = getRoleUser() == ROLE_ADMIN ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
+            navigate(dasshboardRoute);
+        }
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4 py-8">

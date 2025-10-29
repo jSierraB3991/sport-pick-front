@@ -18,14 +18,32 @@ const HeaderComponent = ({ loading, setSearch, userType = "public", showSearchBa
                 <div className="flex items-center justify-between mb-4">
                     <Menu className="w-6 h-6 text-white cursor-pointer hover:text-orange-400 transition-colors" />
                     {userType === "public" && (
-                        <div className="flex gap-2">
-                            <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
-                                Register
-                            </button>
+                        <div className="flex gap-4">
+                            <Link
+                                className="bg-gradient-to-r from-orange-500 to-orange-600 block w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
+                                style={{
+                                    color: "white",
+                                }}
+                                to="/register">
+                                Registrarse
+                            </Link>
                             <Link
                                 className="block w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
                                 to="/login">
                                 Ir a Login
+                            </Link>
+                        </div>
+                    )}
+                    {userType !== "public" && (
+                        <div className="flex items-center gap-3">
+                            <Link
+                                to="/dashboard"
+                                className="relative inline-block w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500 shadow-md hover:shadow-orange-600/50 transition-all">
+                                <img
+                                    src="/public/avatar.png" // tu imagen o icono de usuario
+                                    alt="User avatar"
+                                    className="w-full h-full object-cover"
+                                />
                             </Link>
                         </div>
                     )}

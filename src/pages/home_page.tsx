@@ -6,6 +6,7 @@ import { BetDataSportsApi } from "../api/bet_data_api";
 import { useToast } from "../contexts/tast_contexts";
 import { BetDataHome, PpalLeagues, PPalLeaguesByCountry } from "../models/bet_dat_models";
 import GetSportIcon from "../components/icons_sport";
+import { getRoleUser } from "../libs/token_data";
 
 interface Match {
     league: string;
@@ -37,6 +38,7 @@ export const HomePage = (): JSX.Element => {
     const [activeTab, setActiveTab] = useState<TabType>("highlights");
 
     const [activeSport, setActiveSport] = useState("football");
+    const [userRole, setUserRole] = useState("public");
     const [countryLeagues, setCountryLeagues] = useState("");
     const [pPlaLeague, setPPalLeague] = useState("");
     const [query, setQuery] = useState("");
@@ -131,13 +133,15 @@ export const HomePage = (): JSX.Element => {
     }, [query]);
 
     useEffect(() => {
+        const role = getRoleUser();
+        setUserRole(role == "" ? "public" : role);
         fetchData();
     }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 mx-auto">
             {/* Header */}
-            <HeaderComponent loading={isLoading} userType="public" showSearchBar={true} setSearch={setQuery} />
+            <HeaderComponent loading={isLoading} userType={userRole} showSearchBar={true} setSearch={setQuery} />
             {/* Navigation Icons */}
             <div className="bg-white px-2 sm:px-4 lg:px-8 py-4 flex border-b border-slate-200 overflow-x-auto shadow-sm">
                 <button className="flex flex-col items-center gap-1 min-w-[60px] text-slate-700 hover:text-teal-600 transition-colors">

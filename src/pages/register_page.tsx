@@ -1,4 +1,3 @@
-// pages/auth/Register.tsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
@@ -6,6 +5,7 @@ import { useToast } from "../contexts/tast_contexts";
 import LoadingBarComponent from "../components/loading_bar_component";
 import { getCountriesApi, getIndicativesByCountryApi } from "../api/public_api";
 import { CountryModel, Indicative } from "../models/country_models";
+import { RegisterApi } from "../api/oauth";
 
 const RegisterPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -14,7 +14,8 @@ const RegisterPage: React.FC = () => {
     const [selectedCountry, setSelectedCountry] = useState<CountryModel>();
     const [selectIndicatives, setSelectIndicatives] = useState<Indicative | null>();
 
-    const [fullName, setFullName] = useState<string>("");
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
     const [documentId, setDocumentId] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -45,7 +46,15 @@ const RegisterPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            await RegisterApi({
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                country_id: selectedCountry?.id,
+                indicative: selectIndicatives?.indicative,
+                cellphone: phoneNumber,
+                password: password,
+            });
 
             showToast({
                 type: "success",
@@ -55,11 +64,22 @@ const RegisterPage: React.FC = () => {
 
             navigate("/validate-email");
         } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
             showToast({
                 type: "error",
-                title: "Error en el registro",
-                message: "No se pudo completar el registro. Intenta nuevamente.",
+                title: "Error de autenticación",
+                message: message,
+                duration: 0,
+                isShowRecharge: false,
             });
+            setPassword("");
+            setConfirmPassword("");
         } finally {
             setIsLoading(false);
         }
@@ -79,10 +99,19 @@ const RegisterPage: React.FC = () => {
             const data = await getIndicativesByCountryApi(countryId);
             setIndicatives(data);
         } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
             showToast({
                 type: "error",
-                title: "Error en el registro",
-                message: "No se pudo completar el registro. Intenta nuevamente.",
+                title: "Error de autenticación",
+                message: message,
+                duration: 0,
+                isShowRecharge: false,
             });
         } finally {
             setIsLoading(false);
@@ -95,10 +124,18 @@ const RegisterPage: React.FC = () => {
             const data = await getCountriesApi("");
             setCountries(data);
         } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
             showToast({
                 type: "error",
-                title: "Error en el registro",
-                message: "No se pudo completar el registro. Intenta nuevamente.",
+                title: "Error de autenticación",
+                message: message,
+                duration: 0,
             });
         } finally {
             setIsLoading(false);
@@ -120,20 +157,39 @@ const RegisterPage: React.FC = () => {
                 {/* Formulario */}
                 <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-slate-700">
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Nombre Completo */}
-                        <div>
-                            <label htmlFor="fullName" className="block text-sm font-medium text-slate-300 mb-2">
-                                Nombre completo
-                            </label>
-                            <input
-                                id="fullName"
-                                type="text"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                placeholder="Juan Pérez"
-                                required
-                                className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                            />
+                        {/* Nombre y Apellido */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-slate-300 mb-2">
+                                    Nombre
+                                </label>
+                                <input
+                                    id="firstName"
+                                    type="text"
+                                    value={firstName}
+                                    disabled={isLoading}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    placeholder="Juan"
+                                    required
+                                    className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-slate-300 mb-2">
+                                    Apellido
+                                </label>
+                                <input
+                                    id="lastName"
+                                    type="text"
+                                    disabled={isLoading}
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    placeholder="Pérez"
+                                    required
+                                    className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                                />
+                            </div>
                         </div>
 
                         {/* Documento de Identidad */}
@@ -145,6 +201,7 @@ const RegisterPage: React.FC = () => {
                                 id="documentId"
                                 type="text"
                                 value={documentId}
+                                disabled={isLoading}
                                 onChange={(e) => setDocumentId(e.target.value)}
                                 placeholder="123456789"
                                 required
@@ -161,6 +218,7 @@ const RegisterPage: React.FC = () => {
                                 <input
                                     id="country"
                                     type="text"
+                                    disabled={isLoading}
                                     value={countrySearch || selectedCountry?.name}
                                     onChange={(e) => {
                                         setCountrySearch(e.target.value);
@@ -201,6 +259,7 @@ const RegisterPage: React.FC = () => {
                                 id="email"
                                 type="email"
                                 value={email}
+                                disabled={isLoading}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="correo@ejemplo.com"
                                 required
@@ -218,6 +277,7 @@ const RegisterPage: React.FC = () => {
                                 <div className="relative w-32">
                                     <button
                                         type="button"
+                                        disabled={isLoading}
                                         onClick={() => setShowPhoneDropdown(!showPhoneDropdown)}
                                         className="w-full px-3 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all flex items-center justify-between">
                                         <span className="flex items-center gap-1">
@@ -252,6 +312,7 @@ const RegisterPage: React.FC = () => {
                                     id="phone"
                                     type="tel"
                                     value={phoneNumber}
+                                    disabled={isLoading}
                                     onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
                                     placeholder="0000000000"
                                     required
@@ -273,6 +334,7 @@ const RegisterPage: React.FC = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     required
+                                    disabled={isLoading}
                                     minLength={6}
                                     className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all pr-12"
                                 />
@@ -298,6 +360,7 @@ const RegisterPage: React.FC = () => {
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     placeholder="••••••••"
                                     required
+                                    disabled={isLoading}
                                     minLength={6}
                                     className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all pr-12"
                                 />
@@ -321,7 +384,13 @@ const RegisterPage: React.FC = () => {
                         {/* Login Link */}
                         <div className="text-center mt-4">
                             <span className="text-sm text-slate-400">¿Ya tienes cuenta? </span>
-                            <Link to="/login" className="text-sm text-teal-400 hover:text-teal-300 transition-colors font-semibold">
+                            <Link
+                                to="/login"
+                                className={
+                                    isLoading
+                                        ? "text-sm text-teal-400 hover:text-teal-300 transition-colors underline pointer-events-none opacity-50"
+                                        : "text-sm text-teal-400 hover:text-teal-300 transition-colors underline"
+                                }>
                                 Iniciar sesión
                             </Link>
                         </div>
