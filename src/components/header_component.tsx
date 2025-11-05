@@ -1,8 +1,13 @@
 import { Menu, Search } from "lucide-react";
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../style/header.css";
 import LoadingBarComponent from "./loading_bar_component";
+import UserMenuComponent from "./user_menu";
+import { getToken } from "../libs/token_data";
+import { getUserDataApi } from "../api/user_api";
+import { useToast } from "../contexts/tast_contexts";
+import { UserResponse } from "../models/user_models";
 
 export interface HeaderParams {
     loading: boolean;
@@ -12,6 +17,43 @@ export interface HeaderParams {
 }
 
 const HeaderComponent = ({ loading, setSearch, userType = "public", showSearchBar = false }: HeaderParams): JSX.Element => {
+    const { showToast } = useToast();
+    const [userData, setUserData] = useState<UserResponse>();
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getUserDataApi();
+            setUserData(data);
+        } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
+            showToast({
+                type: "error",
+                title: "Error al buscar las posibles apuestas",
+                message: message,
+                duration: 0,
+                isShowRecharge: true,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const toke = getToken();
+        if (toke !== "") {
+            fetchData();
+        }
+    }, []);
+
     return (
         <>
             <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 sm:px-6 lg:px-8 py-3 shadow-xl">
@@ -35,16 +77,8 @@ const HeaderComponent = ({ loading, setSearch, userType = "public", showSearchBa
                         </div>
                     )}
                     {userType !== "public" && (
-                        <div className="flex items-center gap-3">
-                            <Link
-                                to="/dashboard"
-                                className="relative inline-block w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500 shadow-md hover:shadow-orange-600/50 transition-all">
-                                <img
-                                    src="/public/avatar.png" // tu imagen o icono de usuario
-                                    alt="User avatar"
-                                    className="w-full h-full object-cover"
-                                />
-                            </Link>
+                        <div className="flex items-center gap-4">
+                            <UserMenuComponent userName={userData?.first_name + " " + userData?.last_name} userEmail={userData?.email || ""} />
                         </div>
                     )}
                 </div>
@@ -63,7 +97,7 @@ const HeaderComponent = ({ loading, setSearch, userType = "public", showSearchBa
                     </div>
                 )}
             </div>
-            {loading && <LoadingBarComponent />};
+            {(loading || isLoading) && <LoadingBarComponent />};
         </>
     );
 };

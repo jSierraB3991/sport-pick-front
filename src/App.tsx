@@ -5,6 +5,13 @@ import LoginPage from "./pages/login_page";
 import { ToastProvider } from "./contexts/tast_contexts";
 import ToastContainer from "./components/toast_container";
 import RegisterPage from "./pages/register_page";
+import DashboardRedirect from "./libs/dahboard_redirect.tsx";
+import ProtectedRoute from "./components/protected_routes.tsx";
+import UserDashboardLayout from "./components/layouts/user_dashboard_layout.tsx";
+import AdminDashboardLayout from "./components/layouts/admin_dashboard_layout.tsx";
+import AdminHomnePage from "./pages/admin_page/admin_home_page.tsx";
+import UserHomePage from "./pages/users_page/user_home_page.tsx";
+import NotFoundPage from "./pages/not_found_page.tsx";
 
 function App() {
     const RouterComponent = BrowserRouter;
@@ -18,24 +25,38 @@ function App() {
                     <Route>
                         <Route path="/home" element={<HomePage />} />
                     </Route>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/dashboard" element={<DashboardRedirect />} />
 
                     {/* User Dashboard Routes */}
-                    <Route path="/user">
+                    <Route
+                        path="/user"
+                        element={
+                            <ProtectedRoute requiredRole="user">
+                                <UserDashboardLayout />
+                            </ProtectedRoute>
+                        }>
                         <Route index element={<Navigate to="/user/home" replace />} />
+                        <Route path="home" element={<UserHomePage />} />
                     </Route>
-
                     {/* Admin Dashboard Routes */}
-                    <Route path="/admin">
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute requiredRole="admin">
+                                <AdminDashboardLayout />
+                            </ProtectedRoute>
+                        }>
                         <Route index element={<Navigate to="/admin/home" replace />} />
+                        <Route path="home" element={<AdminHomnePage />} />
                     </Route>
 
                     {/* Redirect root to login */}
                     <Route path="/" element={<Navigate to="/home" replace />} />
 
-                    {/* 404 Not Found */}
-                    <Route path="*" element={<Navigate to="/home" replace />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </ToastProvider>
         </RouterComponent>

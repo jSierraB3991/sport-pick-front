@@ -5,8 +5,22 @@ const COUNTRY_LOCALSTORAGE: string = "country_local_storage";
 const COUNTRY_SELECT: string = "country_selected";
 
 const ROUTE_ADMIN_HOME: string = "/admin/home";
-const ROUTE_USER_HOME: string = "/dashboard/user";
+const ROUTE_USER_HOME: string = "/user/home";
 
 const ROLE_ADMIN: string = "ROLE_ADMIN";
+const ROLE_USER: string = "ROLE_USER";
 
-export { TOKEN_EXPIRED_IN, TOKEN_ROLE, TOKEN_TOKEN, COUNTRY_LOCALSTORAGE, COUNTRY_SELECT, ROUTE_ADMIN_HOME, ROUTE_USER_HOME, ROLE_ADMIN };
+const TENAT_APP_KEY = "sport-pick-app";
+
+export {
+    TOKEN_EXPIRED_IN,
+    TOKEN_ROLE,
+    TOKEN_TOKEN,
+    COUNTRY_LOCALSTORAGE,
+    COUNTRY_SELECT,
+    ROUTE_ADMIN_HOME,
+    ROUTE_USER_HOME,
+    ROLE_ADMIN,
+    ROLE_USER,
+    TENAT_APP_KEY,
+};

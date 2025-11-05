@@ -1,30 +1,12 @@
 import { JSX, useEffect, useState } from "react";
-import { Trophy, Tv } from "lucide-react";
 import FooterComponent from "../components/footer_component";
 import HeaderComponent from "../components/header_component";
 import { BetDataSportsApi } from "../api/bet_data_api";
 import { useToast } from "../contexts/tast_contexts";
-import { BetDataHome, PpalLeagues, PPalLeaguesByCountry } from "../models/bet_dat_models";
+import { BetDataHome, LiveDataMatchWs, LiveMatchBetResponseWs, PpalLeagues, PPalLeaguesByCountry } from "../models/bet_dat_models";
 import GetSportIcon from "../components/icons_sport";
 import { getRoleUser } from "../libs/token_data";
-
-interface Match {
-    league: string;
-    time: string;
-    home: string;
-    away: string;
-    odds: string[];
-}
-
-interface LiveScore {
-    home: string;
-    away: string;
-    scoreHome: string;
-    scoreAway: string;
-    time: string;
-    homeLogo: string;
-    awayLogo: string;
-}
+import { getLiveMatchsApiWs } from "../api/base_ws_socket";
 
 interface League {
     name: string;
@@ -43,55 +25,14 @@ export const HomePage = (): JSX.Element => {
     const [pPlaLeague, setPPalLeague] = useState("");
     const [query, setQuery] = useState("");
 
+    //const [categoriesMatch, setCategoriesMatch] = useState<CategoriesMatchWs[] | undefined>([]);
+    const [liveDataNMatch, setLiveDataMatch] = useState<LiveDataMatchWs[] | undefined>([]);
+
+    const [liveResultMatch, setLiveResultMatch] = useState<LiveDataMatchWs[] | undefined>([]);
     const [spoortOdds, setSportdds] = useState<BetDataHome[]>([]);
     const [ppalLeaguesByCountry, setPpalLeguesByCountry] = useState<PPalLeaguesByCountry[]>([]);
     const [ppalLeagues, setPpalLegues] = useState<PpalLeagues[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    const matches: Match[] = [
-        {
-            league: "Champions League, Group B",
-            time: "08.10 / 11:45",
-            home: "Porto",
-            away: "Liverpool FC",
-            odds: ["3.74", "2.10", "4.75"],
-        },
-        {
-            league: "Super Lig",
-            time: "08.10 / 16:45",
-            home: "Galatasaray",
-            away: "Besiktas",
-            odds: ["1.35", "2.80", "6.25"],
-        },
-        {
-            league: "Premier League 19/20",
-            time: "09.10 / 16:30",
-            home: "Crystal Palace",
-            away: "Manchester City",
-            odds: ["3.35", "2.80", "2.15"],
-        },
-    ];
-
-    const liveScores: LiveScore[] = [
-        {
-            home: "Juventus",
-            away: "Milan",
-            scoreHome: "2",
-            scoreAway: "0",
-            time: "38' 1st Half",
-            homeLogo: "⚫⚪",
-            awayLogo: "🔴⚫",
-        },
-        {
-            home: "Manchester U",
-            away: "Leicester",
-            scoreHome: "0",
-            scoreAway: "1",
-            time: "42' 1st Half",
-            homeLogo: "🔴",
-            awayLogo: "🔵",
-        },
-    ];
 
     const topLeagues: League[] = [
         { name: "Europa League", icon: "🏆" },
@@ -100,6 +41,33 @@ export const HomePage = (): JSX.Element => {
         { name: "Serie A", icon: "🇮🇹" },
         { name: "Champions", icon: "⭐" },
     ];
+
+    const getMatchInLive = async () => {
+        setIsLoading(true);
+        const ws = getLiveMatchsApiWs();
+        ws.onopen = () => {
+            console.log("Connected to WebSocket");
+        };
+
+        ws.onmessage = (event) => {
+            setIsLoading(false);
+            const dataWs = JSON.parse(event.data) as LiveMatchBetResponseWs;
+            //setCategoriesMatch(dataWs.data?.categories_match);
+            setLiveDataMatch(dataWs.data?.liva_data);
+
+            const filteredAndSorted = (dataWs.data?.liva_data || [])
+                .filter((item) => item.match_state != "NOT_STARTED")
+                .sort((a, b) => b.live_odd_count - a.live_odd_count)
+                .slice(0, 3);
+            setLiveResultMatch(filteredAndSorted);
+        };
+
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+
+        return () => ws.close();
+    };
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -136,30 +104,18 @@ export const HomePage = (): JSX.Element => {
         const role = getRoleUser();
         setUserRole(role == "" ? "public" : role);
         fetchData();
+        getMatchInLive();
     }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 mx-auto">
             {/* Header */}
-            <HeaderComponent loading={isLoading} userType={userRole} showSearchBar={true} setSearch={setQuery} />
-            {/* Navigation Icons */}
-            <div className="bg-white px-2 sm:px-4 lg:px-8 py-4 flex border-b border-slate-200 overflow-x-auto shadow-sm">
-                <button className="flex flex-col items-center gap-1 min-w-[60px] text-slate-700 hover:text-teal-600 transition-colors">
-                    <Tv className="w-5 h-5 sm:w-6 sm:h-6" />
-                    <span className="text-xs font-medium">Live</span>
-                </button>
-                <button className="flex flex-col items-center gap-1 min-w-[60px] text-slate-700 hover:text-teal-600 transition-colors">
-                    <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
-                    <span className="text-xs font-medium">Sports</span>
-                </button>
-            </div>
-
+            <HeaderComponent loading={isLoading} userType={userRole} showSearchBar={false} setSearch={setQuery} />
             {/* Hero Banner */}
             <div className="bg-gradient-to-r from-teal-500 via-teal-600 to-cyan-600 p-6 sm:p-8 lg:p-12 relative overflow-hidden shadow-xl">
                 <div className="relative z-10 max-w-xl">
-                    <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold mb-1">Double Odds On</h2>
-                    <h3 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Goalscorer Bets</h3>
-                    <p className="text-white text-sm sm:text-base opacity-90">if he scores two or more</p>
+                    <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold mb-1">Partido con más Apuestas </h2>
+                    <h3 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Apuesta por # de Goles</h3>
                 </div>
                 <div className="absolute right-2 sm:right-4 lg:right-12 top-1/2 transform -translate-y-1/2">
                     <div className="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-white rounded-full flex items-center justify-center shadow-2xl">
@@ -177,24 +133,28 @@ export const HomePage = (): JSX.Element => {
 
             {/* Live Scores */}
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 space-y-3 shadow-sm">
-                {liveScores.map((match, idx) => (
-                    <div key={idx} className="flex items-center justify-between hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                {liveResultMatch?.map((match) => (
+                    <div key={match.id} className="flex items-center justify-between hover:bg-slate-50 p-2 rounded-lg transition-colors">
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <div className="text-xl sm:text-2xl flex-shrink-0">{match.homeLogo}</div>
+                            <div className="text-xl sm:text-2xl flex-shrink-0">⚽</div>
                             <div className="flex flex-col min-w-0">
-                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">{match.home}</span>
+                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">
+                                    {match.home_name.length > 17 ? match.home_name.slice(0, 14) + "..." : match.home_name}
+                                </span>
                             </div>
                         </div>
                         <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 flex-shrink-0">
-                            <span className="text-xl sm:text-2xl font-bold text-slate-900">{match.scoreHome}</span>
+                            <span className="text-xl sm:text-2xl font-bold text-slate-900">{match.stadistics.match_score.score_home}</span>
                             <span className="text-xl sm:text-2xl font-bold text-slate-400">:</span>
-                            <span className="text-xl sm:text-2xl font-bold text-slate-900">{match.scoreAway}</span>
+                            <span className="text-xl sm:text-2xl font-bold text-slate-900">{match.stadistics.match_score.score_away}</span>
                         </div>
                         <div className="flex items-center gap-2 flex-1 justify-end min-w-0">
                             <div className="flex flex-col items-end min-w-0">
-                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">{match.away}</span>
+                                <span className="font-semibold text-xs sm:text-sm truncate text-slate-800">
+                                    {match.away_name.length > 17 ? match.away_name.slice(0, 14) + "..." : match.away_name}
+                                </span>
                             </div>
-                            <div className="text-xl sm:text-2xl flex-shrink-0">{match.awayLogo}</div>
+                            <div className="text-xl sm:text-2xl flex-shrink-0">⚽</div>
                         </div>
                     </div>
                 ))}
@@ -265,15 +225,15 @@ export const HomePage = (): JSX.Element => {
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
                 {ppalLeagues !== null &&
                     ppalLeagues.length > 0 &&
-                    ppalLeagues.map((sp) => (
+                    ppalLeagues.map((ppl) => (
                         <button
-                            onClick={() => setPPalLeague(sp.term_key)}
+                            onClick={() => setPPalLeague(ppl.term_key)}
                             className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
-                                pPlaLeague === sp.term_key
+                                pPlaLeague === ppl.term_key
                                     ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
                                     : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                             }`}>
-                            {GetSportIcon(sp.term_key)} {sp.name}
+                            {GetSportIcon(ppl.term_key)} {ppl.name}
                         </button>
                     ))}
             </div>
@@ -281,33 +241,40 @@ export const HomePage = (): JSX.Element => {
             {/* Matches List */}
             <div className="px-4 sm:px-6 lg:px-8 py-2 space-y-3">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    {matches.map((match, idx) => (
-                        <div key={idx} className="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border border-slate-200">
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2 flex-1 min-w-0">
-                                    <div className="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></div>
-                                    <span className="text-xs text-slate-600 truncate font-medium">{match.league}</span>
+                    {liveDataNMatch?.map(
+                        (match, idx) =>
+                            match.best_offers != null && (
+                                <div key={idx} className="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border border-slate-200">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                                            <div className="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></div>
+                                            <span className="text-xs text-slate-600 truncate font-medium">{match.group}</span>
+                                        </div>
+                                        <span className="text-xs font-semibold text-orange-600 whitespace-nowrap ml-2">{match.match_start_string}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-semibold text-sm mb-1 truncate text-slate-800">{match.home_name}</div>
+                                            <div className="font-semibold text-sm truncate text-slate-800">{match.away_name}</div>
+                                        </div>
+                                        <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+                                            {match.best_offers &&
+                                                match.best_offers.length >= 1 &&
+                                                match.best_offers[0].outcomes.map((odd) => (
+                                                    <button
+                                                        key={odd.data}
+                                                        className="bg-slate-100 hover:bg-gradient-to-br hover:from-teal-50 hover:to-cyan-50 hover:border-teal-300 border border-slate-200 px-2 sm:px-4 py-2 rounded-lg text-sm font-bold min-w-[50px] sm:min-w-[60px] transition-all">
+                                                        <div className="text-xs text-slate-500 mb-0.5">
+                                                            {odd.data} {odd.line == null ? "" : odd.line / 1000}
+                                                        </div>
+                                                        <div className="text-slate-900">{odd.odds / 1000}</div>
+                                                    </button>
+                                                ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span className="text-xs font-semibold text-orange-600 whitespace-nowrap ml-2">{match.time}</span>
-                            </div>
-                            <div className="flex items-center justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                    <div className="font-semibold text-sm mb-1 truncate text-slate-800">{match.home}</div>
-                                    <div className="font-semibold text-sm truncate text-slate-800">{match.away}</div>
-                                </div>
-                                <div className="flex gap-1 sm:gap-2 flex-shrink-0">
-                                    {match.odds.map((odd, i) => (
-                                        <button
-                                            key={i}
-                                            className="bg-slate-100 hover:bg-gradient-to-br hover:from-teal-50 hover:to-cyan-50 hover:border-teal-300 border border-slate-200 px-2 sm:px-4 py-2 rounded-lg text-sm font-bold min-w-[50px] sm:min-w-[60px] transition-all">
-                                            <div className="text-xs text-slate-500 mb-0.5">{i === 0 ? "1" : i === 1 ? "X" : "2"}</div>
-                                            <div className="text-slate-900">{odd}</div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                            )
+                    )}
                 </div>
             </div>
 

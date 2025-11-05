@@ -6,6 +6,8 @@ import LoadingBarComponent from "../components/loading_bar_component";
 import { getCountriesApi, getIndicativesByCountryApi } from "../api/public_api";
 import { CountryModel, Indicative } from "../models/country_models";
 import { RegisterApi } from "../api/oauth";
+import { getRoleUser, getToken } from "../libs/token_data";
+import { ROLE_ADMIN, ROUTE_ADMIN_HOME, ROUTE_USER_HOME } from "../libs/constants";
 
 const RegisterPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -143,6 +145,11 @@ const RegisterPage: React.FC = () => {
     };
 
     useEffect(() => {
+        const token = getToken();
+        if (token !== "") {
+            const dasshboardRoute = getRoleUser() == ROLE_ADMIN ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
+            navigate(dasshboardRoute);
+        }
         fethcData();
     }, []);
 
