@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, History, Trophy, Key, LogOut, Menu, X } from "lucide-react";
+import { Home, LogOut, Menu, X } from "lucide-react";
 import { logOutUser } from "../../libs/token_data";
 
 const UserDashboardLayout: React.FC = () => {
@@ -15,9 +15,6 @@ const UserDashboardLayout: React.FC = () => {
 
     const menuItems = [
         { path: "/user/home", icon: Home, label: "Home" },
-        /*{ path: "/user/history", icon: History, label: "Historial" },
-        { path: "/user/challenges", icon: Trophy, label: "Desafíos" },
-        { path: "/user/change-password", icon: Key, label: "Cambiar Contraseña" },*/
         { path: "/home", icon: Home, label: "Pagina Principal" },
     ];
 

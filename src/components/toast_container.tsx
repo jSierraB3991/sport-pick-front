@@ -40,7 +40,7 @@ const ToastContainer: React.FC = () => {
     };
 
     return (
-        <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm w-full">
+        <div className="fixed bottom-4 right-4 z-50 space-y-2 max-w-sm w-full">
             {toasts.map((toast) => (
                 <div
                     key={toast.id}
@@ -51,7 +51,8 @@ const ToastContainer: React.FC = () => {
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-sm mb-1">{toast.title}</h4>
+                            {toast.title && <h4 className="font-bold text-sm mb-1">{toast.title}</h4>}
+
                             <p className="text-sm opacity-90">{toast.message}</p>
                         </div>
 

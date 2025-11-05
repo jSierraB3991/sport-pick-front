@@ -45,20 +45,13 @@ const UserHomePage: React.FC = () => {
             icon: LogOut,
             label: "Retirar",
             path: "/user/withdraw",
-        } /*
-        {
-            id: "bonuses",
-            icon: Gift,
-            label: "Bonos",
-            path: "/user/bonuses",
-        },*/,
+        },
     ];
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
             const data = await getUserDataApi();
-            console.log(data);
             setUserData(data);
         } catch (error) {
             let message = "";
@@ -70,7 +63,6 @@ const UserHomePage: React.FC = () => {
             }
             showToast({
                 type: "error",
-                title: "Error al buscar las posibles apuestas",
                 message: message,
                 duration: 0,
                 isShowRecharge: true,

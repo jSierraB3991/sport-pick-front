@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, Users, Mail, Key, LogOut, Menu, X, Shield } from "lucide-react";
+import { Home, Users, Mail, Key, LogOut, Menu, X } from "lucide-react";
 import { logOutUser } from "../../libs/token_data";
 
 const AdminDashboardLayout: React.FC = () => {
@@ -32,13 +32,7 @@ const AdminDashboardLayout: React.FC = () => {
                             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
                         <div className="text-2xl font-bold">
-                            <span className="text-white">bet</span>
-                            <span className="text-orange-500">co</span>
-                            <span className="text-white">.</span>
-                        </div>
-                        <div className="hidden sm:flex items-center gap-2 bg-orange-500 px-3 py-1 rounded-full">
-                            <Shield size={16} className="text-white" />
-                            <span className="text-white text-xs font-bold">ADMIN</span>
+                            <img style={{ height: "2.5rem" }} src="/public/logo.png" />
                         </div>
                     </div>
                     <div className="flex items-center gap-4">

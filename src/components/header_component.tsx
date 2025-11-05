@@ -37,7 +37,6 @@ const HeaderComponent = ({ loading, setSearch, userType = "public", showSearchBa
             }
             showToast({
                 type: "error",
-                title: "Error al buscar las posibles apuestas",
                 message: message,
                 duration: 0,
                 isShowRecharge: true,

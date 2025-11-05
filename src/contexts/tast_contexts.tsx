@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 interface Toast {
     id: string;
     type: "success" | "error" | "warning" | "info";
-    title: string;
+    title?: string;
     message: string;
     duration?: number;
     isShowRecharge?: boolean;

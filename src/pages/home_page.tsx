@@ -73,9 +73,12 @@ export const HomePage = (): JSX.Element => {
         setIsLoading(true);
         try {
             const betDataApi = await BetDataSportsApi();
-            setSportdds(betDataApi);
-            setPpalLeguesByCountry(betDataApi.filter((bd) => bd.term_key == activeSport).map((bd) => bd.ppal_leagues_by_country)[0]);
+            if (betDataApi != null) {
+                setSportdds(betDataApi);
+                setPpalLeguesByCountry(betDataApi.filter((bd) => bd.term_key == activeSport).map((bd) => bd.ppal_leagues_by_country)[0]);
+            }
         } catch (error) {
+            console.log(error);
             let message = "";
             if (error instanceof Error && "response" in error) {
                 const axiosError = error as any;
