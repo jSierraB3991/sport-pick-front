@@ -92,7 +92,7 @@ const UserHomePage: React.FC = () => {
                             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-red-500 p-1 shadow-2xl">
                                 <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
                                     <img
-                                        src={userData?.image_user || "public/avatar.png"}
+                                        src={userData?.image_user || "/avatar.png"}
                                         alt="Avatar"
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
