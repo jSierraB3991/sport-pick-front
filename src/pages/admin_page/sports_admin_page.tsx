@@ -124,53 +124,54 @@ const AdminSportPage: React.FC = () => {
                     </div>
                     {/* Grid de Deportes */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        {sportsData.map((sport, i) => (
-                            <div
-                                key={sport.id}
-                                className={`bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-700 p-6 transition-all ${
-                                    sport.is_available ? "hover:shadow-2xl hover:scale-[1.02]" : "opacity-60"
-                                }`}>
-                                <div className="flex items-center gap-6">
-                                    {/* Emoji/Icon */}
-                                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-700 rounded-2xl flex items-center justify-center text-5xl sm:text-6xl flex-shrink-0 shadow-lg">
-                                        {GetSportIcon(sport.description)}
-                                    </div>
+                        {sportsData != null &&
+                            sportsData.map((sport, i) => (
+                                <div
+                                    key={sport.id}
+                                    className={`bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-700 p-6 transition-all ${
+                                        sport.is_available ? "hover:shadow-2xl hover:scale-[1.02]" : "opacity-60"
+                                    }`}>
+                                    <div className="flex items-center gap-6">
+                                        {/* Emoji/Icon */}
+                                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-700 rounded-2xl flex items-center justify-center text-5xl sm:text-6xl flex-shrink-0 shadow-lg">
+                                            {GetSportIcon(sport.description)}
+                                        </div>
 
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{sport.name}</h3>
-                                        {sport.description && <p className="text-slate-400 text-sm mb-4">{sport.description}</p>}
+                                        {/* Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{sport.name}</h3>
+                                            {sport.description && <p className="text-slate-400 text-sm mb-4">{sport.description}</p>}
 
-                                        {/* Switch + Botón Países */}
-                                        <div className="flex items-center justify-between">
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={sport.is_available}
-                                                    onChange={() => toggleSport(sport.id)}
-                                                    className="sr-only peer"
-                                                />
-                                                <div className="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
-                                                <span className="ml-3 text-sm font-medium text-slate-300">
-                                                    {sport.is_available ? "Habilitado" : "Deshabilitado"}
-                                                </span>
-                                            </label>
+                                            {/* Switch + Botón Países */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={sport.is_available}
+                                                        onChange={() => toggleSport(sport.id)}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div className="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
+                                                    <span className="ml-3 text-sm font-medium text-slate-300">
+                                                        {sport.is_available ? "Habilitado" : "Deshabilitado"}
+                                                    </span>
+                                                </label>
 
-                                            {/* Botón Países */}
-                                            {initialData[i].is_available && sport.is_available && (
-                                                <button
-                                                    onClick={() => navigate(`/admin/sport-countries/${sport.id}`)}
-                                                    className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-3 py-2 rounded-lg shadow-md transition"
-                                                    title="Ver países">
-                                                    <Globe className="w-4 h-4" />
-                                                    <span className="hidden sm:inline">Países</span>
-                                                </button>
-                                            )}
+                                                {/* Botón Países */}
+                                                {initialData[i].is_available && sport.is_available && (
+                                                    <button
+                                                        onClick={() => navigate(`/admin/sport-countries/${sport.id}`)}
+                                                        className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-3 py-2 rounded-lg shadow-md transition"
+                                                        title="Ver países">
+                                                        <Globe className="w-4 h-4" />
+                                                        <span className="hidden sm:inline">Países</span>
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 </div>
             </div>

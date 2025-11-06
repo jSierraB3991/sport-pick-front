@@ -1,12 +1,14 @@
 import { FC, useEffect, useState } from "react";
 import LoadingBarComponent from "../../components/loading_bar_component";
 import { useToast } from "../../contexts/tast_contexts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { getToken } from "../../libs/token_data";
 import { AdminCountry } from "../../models/admin_data";
+import { getCountriesBySportApi } from "../../api/admin_api";
 
 const CountriesAdminPage: FC = () => {
+    const { sportId } = useParams();
     const { showToast } = useToast();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -23,10 +25,34 @@ const CountriesAdminPage: FC = () => {
     };
 
     const toggleSport = (sportId: number) => {
+        console.log(initialData);
         setCountryData((prevData) => prevData.map((sport) => (sport.id === sportId ? { ...sport, is_available: !sport.is_available } : sport)));
     };
 
-    const fetchData = async () => {};
+    const fetchData = async (sport: string) => {
+        setIsLoading(true);
+        try {
+            const data = await getCountriesBySportApi(Number(sport));
+            setInitialData(data);
+            setCountryData(data);
+        } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
+            showToast({
+                type: "error",
+                message: message,
+                duration: 0,
+                isShowRecharge: true,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
         const toke = getToken();
@@ -34,7 +60,12 @@ const CountriesAdminPage: FC = () => {
             navigate("/login");
             return;
         }
-        fetchData();
+
+        if (sportId == undefined && sportId == null && sportId == "") {
+            handleGoBack();
+        } else {
+            fetchData(sportId!);
+        }
     }, []);
 
     return (
