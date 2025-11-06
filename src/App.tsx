@@ -52,7 +52,7 @@ function App() {
                         <Route path="home" element={<AdminHomnePage />} />
 
                         <Route path="sports" element={<AdminSportPage />} />
-                        <Route path="sport-countries/:id" element={<CountriesAdminPage />} />
+                        <Route path="sport-countries/:sportId" element={<CountriesAdminPage />} />
                     </Route>
 
                     {/* Redirect root to login */}
