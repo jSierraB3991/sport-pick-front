@@ -83,7 +83,7 @@ const CountriesAdminPage: FC = () => {
                     </div>
                     {/* Grid de Deportes */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        {countryData.map((sport, i) => (
+                        {countryData.map((sport) => (
                             <div
                                 key={sport.id}
                                 className={`bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-700 p-6 transition-all ${
