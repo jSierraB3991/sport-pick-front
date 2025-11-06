@@ -20,7 +20,7 @@ const NotFoundPage: React.FC = () => {
                 {/* Logo */}
                 <div className="mb-8">
                     <div className="text-4xl font-bold inline-block">
-                        <img src="/public/logo.png" />
+                        <img src="/logo.png" />
                     </div>
                 </div>
 

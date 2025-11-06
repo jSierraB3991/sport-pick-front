@@ -32,7 +32,7 @@ const AdminDashboardLayout: React.FC = () => {
                             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
                         <div className="text-2xl font-bold">
-                            <img style={{ height: "2.5rem" }} src="/public/logo.png" />
+                            <img style={{ height: "2.5rem" }} src="/logo.png" />
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
