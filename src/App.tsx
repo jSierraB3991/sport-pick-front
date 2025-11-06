@@ -13,6 +13,7 @@ import AdminHomnePage from "./pages/admin_page/admin_home_page.tsx";
 import UserHomePage from "./pages/users_page/user_home_page.tsx";
 import NotFoundPage from "./pages/not_found_page.tsx";
 import AdminSportPage from "./pages/admin_page/sports_admin_page.tsx";
+import CountriesAdminPage from "./pages/admin_page/countries_admin_page.tsx";
 
 function App() {
     const RouterComponent = BrowserRouter;
@@ -48,8 +49,10 @@ function App() {
                             </ProtectedRoute>
                         }>
                         <Route index element={<Navigate to="/admin/home" replace />} />
-                        <Route path="deportes" element={<AdminSportPage />} />
                         <Route path="home" element={<AdminHomnePage />} />
+
+                        <Route path="sports" element={<AdminSportPage />} />
+                        <Route path="sport-countries/:id" element={<CountriesAdminPage />} />
                     </Route>
 
                     {/* Redirect root to login */}

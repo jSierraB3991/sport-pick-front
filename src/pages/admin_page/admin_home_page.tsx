@@ -19,7 +19,7 @@ const AdminHomnePage: React.FC = () => {
             id: "personal",
             icon: User,
             label: "Deportes",
-            path: "/admin/deportes",
+            path: "/admin/sports",
         },
     ];
 
