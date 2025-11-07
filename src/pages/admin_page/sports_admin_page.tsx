@@ -110,6 +110,7 @@ const AdminSportPage: React.FC = () => {
                     <div className="flex justify-between mb-6">
                         {/* Botón Volver */}
                         <button
+                            disabled={isLoading}
                             onClick={handleGoBack}
                             className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition">
                             <ArrowLeft className="w-5 h-5" />
@@ -117,6 +118,7 @@ const AdminSportPage: React.FC = () => {
 
                         {/* Botón Actualizar */}
                         <button
+                            disabled={isLoading}
                             onClick={updateEnabledSports}
                             className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition">
                             Actualizar
@@ -146,6 +148,7 @@ const AdminSportPage: React.FC = () => {
                                             <div className="flex items-center justify-between">
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
+                                                        disabled={isLoading}
                                                         type="checkbox"
                                                         checked={sport.is_available}
                                                         onChange={() => toggleSport(sport.id)}
@@ -160,6 +163,7 @@ const AdminSportPage: React.FC = () => {
                                                 {/* Botón Países */}
                                                 {initialData[i].is_available && sport.is_available && (
                                                     <button
+                                                        disabled={isLoading}
                                                         onClick={() => navigate(`/admin/sport-countries/${sport.id}`)}
                                                         className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-3 py-2 rounded-lg shadow-md transition"
                                                         title="Ver países">
