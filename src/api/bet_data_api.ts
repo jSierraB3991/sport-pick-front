@@ -1,4 +1,4 @@
-import { BetDataHome } from "../models/bet_dat_models";
+import { BetDataHome, MatchesByLeague } from "../models/bet_dat_models";
 import instance from "./base_axios";
 
 const BetDataSportsApi = async (): Promise<BetDataHome[]> => {
@@ -6,4 +6,9 @@ const BetDataSportsApi = async (): Promise<BetDataHome[]> => {
     return response.data;
 };
 
-export { BetDataSportsApi };
+const betSearchByLeagueApi = async (sport: string, country: string, league: string): Promise<MatchesByLeague> => {
+    const response = await instance.get<MatchesByLeague>(`public/bet/league/?query=${sport}/${country}/${league}`);
+    return response.data;
+};
+
+export { BetDataSportsApi, betSearchByLeagueApi };
