@@ -63,17 +63,22 @@ export interface LiveDataMatchWs {
     stadistics: LiveStadisticWs;
 }
 
-export interface CategoriesMatchWs {
+export interface CategoriesMatch {
     name: string;
     english_name: string;
     id: number;
 }
-export interface LiveDataMacthDataWs {
+export interface LiveDataMachtData {
     liva_data: LiveDataMatchWs[];
-    categories_match: CategoriesMatchWs[];
+    categories_match: CategoriesMatch[];
 }
 export interface LiveMatchBetResponseWs {
     status: string | null;
     message: string | null;
-    data: LiveDataMacthDataWs | null;
+    data: LiveDataMachtData | null;
+}
+
+export interface MatchesByLeague {
+    categories_match: CategoriesMatch[];
+    league_data: LiveDataMatchWs[];
 }

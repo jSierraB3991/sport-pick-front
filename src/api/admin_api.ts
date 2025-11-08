@@ -13,5 +13,9 @@ const updateSportApi = async (sportChanges: AdminSportUpdate[]): Promise<null> =
     const data = await instance.put<null>("/admin/config/sports/", sportChanges);
     return data.data;
 };
+const updateBetCountriesApi = async (countriesChange: AdminSportUpdate[]): Promise<null> => {
+    const data = await instance.put<null>("/admin/config/countries/", countriesChange);
+    return data.data;
+};
 
-export { getSportsApi, updateSportApi, getCountriesBySportApi };
+export { getSportsApi, updateSportApi, getCountriesBySportApi, updateBetCountriesApi };
