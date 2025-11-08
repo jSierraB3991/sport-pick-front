@@ -1,7 +1,7 @@
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import FooterComponent from "../components/footer_component";
 import HeaderComponent from "../components/header_component";
-import { BetDataSportsApi } from "../api/bet_data_api";
+import { BetDataSportsApi, betSearchByLeagueApi } from "../api/bet_data_api";
 import { useToast } from "../contexts/tast_contexts";
 import { BetDataHome, LiveDataMatchWs, LiveMatchBetResponseWs, PpalLeagues, PPalLeaguesByCountry } from "../models/bet_dat_models";
 import GetSportIcon from "../components/icons_sport";
@@ -25,14 +25,16 @@ export const HomePage = (): JSX.Element => {
     const [pPlaLeague, setPPalLeague] = useState("");
     const [query, setQuery] = useState("");
 
-    //const [categoriesMatch, setCategoriesMatch] = useState<CategoriesMatchWs[] | undefined>([]);
     const [liveDataNMatch, setLiveDataMatch] = useState<LiveDataMatchWs[] | undefined>([]);
-
     const [liveResultMatch, setLiveResultMatch] = useState<LiveDataMatchWs[] | undefined>([]);
     const [spoortOdds, setSportdds] = useState<BetDataHome[]>([]);
     const [ppalLeaguesByCountry, setPpalLeguesByCountry] = useState<PPalLeaguesByCountry[]>([]);
     const [ppalLeagues, setPpalLegues] = useState<PpalLeagues[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const wsRef = useRef<WebSocket | null>(null);
+
+    const [changeMatchs, setChangeMatchs] = useState(true);
+    const changeMatchsRef = useRef(changeMatchs);
 
     const topLeagues: League[] = [
         { name: "Europa League", icon: "🏆" },
@@ -42,18 +44,26 @@ export const HomePage = (): JSX.Element => {
         { name: "Champions", icon: "⭐" },
     ];
 
+    const disconnectMatchLive = () => {
+        wsRef.current?.close();
+        wsRef.current = null;
+    };
+
     const getMatchInLive = async () => {
-        setIsLoading(true);
+        if (wsRef.current) return; // evitar duplicados
         const ws = getLiveMatchsApiWs();
-        ws.onopen = () => {
+        setIsLoading(true);
+        ws!.onopen = () => {
             console.log("Connected to WebSocket");
         };
 
-        ws.onmessage = (event) => {
+        ws.onopen = () => console.log("WS conectado");
+        ws!.onmessage = (event) => {
             setIsLoading(false);
             const dataWs = JSON.parse(event.data) as LiveMatchBetResponseWs;
-            //setCategoriesMatch(dataWs.data?.categories_match);
-            setLiveDataMatch(dataWs.data?.liva_data);
+            if (changeMatchsRef.current) {
+                setLiveDataMatch(dataWs.data?.liva_data);
+            }
 
             const filteredAndSorted = (dataWs.data?.liva_data || [])
                 .filter((item) => item.match_state != "NOT_STARTED")
@@ -62,11 +72,12 @@ export const HomePage = (): JSX.Element => {
             setLiveResultMatch(filteredAndSorted);
         };
 
-        ws.onerror = (error) => {
+        ws!.onerror = (error) => {
             console.error("WebSocket error:", error);
         };
+        wsRef.current = ws;
 
-        return () => ws.close();
+        return () => ws?.close();
     };
 
     const fetchData = async () => {
@@ -97,6 +108,37 @@ export const HomePage = (): JSX.Element => {
             setIsLoading(false);
         }
     };
+
+    const callMatchesByLeague = async (sport: string, country: string, league: string) => {
+        setIsLoading(true);
+        try {
+            const data = await betSearchByLeagueApi(sport, country, league);
+            setLiveDataMatch(data.league_data);
+            setChangeMatchs(false);
+        } catch (error) {
+            let message = "";
+            if (error instanceof Error && "response" in error) {
+                const axiosError = error as any;
+                message = axiosError.response?.data?.message || "Ocurrió un error desconocido";
+            } else {
+                message = "Ocurrió un error inesperado";
+            }
+            showToast({
+                type: "error",
+                title: "Error al buscar las posibles apuestas",
+                message: message,
+                duration: 0,
+                isShowRecharge: true,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        changeMatchsRef.current = changeMatchs; // mantener actualizada la ref
+    }, [changeMatchs]);
+
     useEffect(() => {
         if (query != "" && query.length > 3) {
             console.log(query);
@@ -108,6 +150,9 @@ export const HomePage = (): JSX.Element => {
         setUserRole(role == "" ? "public" : role);
         fetchData();
         getMatchInLive();
+        return () => {
+            disconnectMatchLive(); // cerrar al desmontar
+        };
     }, []);
 
     return (
@@ -189,7 +234,10 @@ export const HomePage = (): JSX.Element => {
                         <button
                             onClick={() => {
                                 setActiveSport(sp.term_key);
+                                setCountryLeagues("");
+                                setPPalLeague("");
                                 setPpalLeguesByCountry(sp.ppal_leagues_by_country);
+                                setPpalLegues([]);
                             }}
                             className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
                                 activeSport === sp.term_key
@@ -201,7 +249,7 @@ export const HomePage = (): JSX.Element => {
                     ))}
             </div>
 
-            {/* Sports Filter */}
+            {/* Country Filter */}
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
                 {ppalLeaguesByCountry !== null &&
                     ppalLeaguesByCountry.length > 0 &&
@@ -209,10 +257,17 @@ export const HomePage = (): JSX.Element => {
                         <button
                             onClick={() => {
                                 setCountryLeagues(sp.term_key);
+                                setPPalLeague("");
                                 if (sp.ppal_leagues !== null) {
                                     setPpalLegues(sp.ppal_leagues);
                                 } else {
-                                    setPpalLegues([]);
+                                    setPpalLegues([
+                                        {
+                                            english_name: "all",
+                                            name: "Todos",
+                                            term_key: "all",
+                                        },
+                                    ]);
                                 }
                             }}
                             className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
@@ -224,13 +279,16 @@ export const HomePage = (): JSX.Element => {
                         </button>
                     ))}
             </div>
-            {/* Sports Filter */}
+            {/* Leagues Filter */}
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
                 {ppalLeagues !== null &&
                     ppalLeagues.length > 0 &&
                     ppalLeagues.map((ppl) => (
                         <button
-                            onClick={() => setPPalLeague(ppl.term_key)}
+                            onClick={() => {
+                                setPPalLeague(ppl.term_key);
+                                callMatchesByLeague(activeSport, countryLeagues, ppl.term_key);
+                            }}
                             className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
                                 pPlaLeague === ppl.term_key
                                     ? "bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg"
