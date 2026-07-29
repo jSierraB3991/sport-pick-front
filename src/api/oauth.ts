@@ -20,4 +20,12 @@ const UpdateUserApi = async (formData: UserUpdate) => {
     await instance.put("/user/update", formData);
 };
 
-export { LoginApi, LoginTwoFactorApi, RegisterApi, UpdateUserApi };
+const refreshToken = async (tokenRefresh: string): Promise<JwtResponse> => {
+    const data = await instance.post<JwtResponse>("/auth/refresh", {
+        refresh_token: tokenRefresh,
+    });
+
+    return data.data;
+};
+
+export { LoginApi, LoginTwoFactorApi, RegisterApi, UpdateUserApi, refreshToken };

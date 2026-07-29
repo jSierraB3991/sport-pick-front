@@ -13,11 +13,8 @@ interface League {
     icon: string;
 }
 
-type TabType = "highlights" | "upcoming";
-
 export const HomePage = (): JSX.Element => {
     const { showToast } = useToast();
-    const [activeTab, setActiveTab] = useState<TabType>("highlights");
 
     const [activeSport, setActiveSport] = useState("football");
     const [userRole, setUserRole] = useState("public");
@@ -27,7 +24,9 @@ export const HomePage = (): JSX.Element => {
 
     const [liveDataNMatch, setLiveDataMatch] = useState<LiveDataMatchWs[] | undefined>([]);
     const [liveResultMatch, setLiveResultMatch] = useState<LiveDataMatchWs[] | undefined>([]);
+
     const [spoortOdds, setSportdds] = useState<BetDataHome[]>([]);
+
     const [ppalLeaguesByCountry, setPpalLeguesByCountry] = useState<PPalLeaguesByCountry[]>([]);
     const [ppalLeagues, setPpalLegues] = useState<PpalLeagues[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -68,11 +67,10 @@ export const HomePage = (): JSX.Element => {
                 setLiveDataMatch(dataWs.data?.liva_data);
             }
 
-            const filteredAndSorted = (dataWs.data?.liva_data || [])
-                .filter((item) => item.match_state != "NOT_STARTED")
-                .sort((a, b) => b.live_odd_count - a.live_odd_count)
-                .slice(0, 3);
-            setLiveResultMatch(filteredAndSorted);
+            let filteredAndSorted = [...(dataWs.data?.liva_data || [])];
+            filteredAndSorted = filteredAndSorted.filter((item) => item.match_state !== "NOT_STARTED").sort((a, b) => b.live_odd_count - a.live_odd_count); // Recuerda restar para ordenar numéricamente
+
+            setLiveResultMatch(filteredAndSorted.slice(0, 4));
         };
 
         ws!.onerror = (error) => {
@@ -89,7 +87,25 @@ export const HomePage = (): JSX.Element => {
             const betDataApi = await BetDataSportsApi();
             if (betDataApi != null) {
                 setSportdds(betDataApi);
-                setPpalLeguesByCountry(betDataApi.filter((bd) => bd.term_key == activeSport).map((bd) => bd.ppal_leagues_by_country)[0]);
+                const activeSportKey = betDataApi[0]?.term_key || "";
+                setActiveSport(activeSportKey);
+                if (activeSportKey !== "") {
+                    const ppalLeaguesByCountry = betDataApi.filter((bd) => bd.term_key == activeSportKey).map((bd) => bd.ppal_leagues_by_country)[0];
+                    const countryKey = ppalLeaguesByCountry[0]?.term_key || "";
+                    setCountryLeagues(countryKey);
+                    setPpalLeguesByCountry(ppalLeaguesByCountry || []);
+
+                    if (countryKey !== "") {
+                        const ppalLeagues = ppalLeaguesByCountry[0].ppal_leagues || [];
+                        setPpalLegues(ppalLeagues);
+                        const leagueKey = ppalLeagues[0]?.term_key || "";
+                        setPPalLeague(leagueKey);
+
+                        if (leagueKey !== "") {
+                            callMatchesByLeague(activeSportKey, countryKey, leagueKey);
+                        }
+                    }
+                }
             }
         } catch (error) {
             console.log(error);
@@ -211,36 +227,20 @@ export const HomePage = (): JSX.Element => {
                 ))}
             </div>
 
-            {/* Tabs */}
-            <div className="bg-white border-b border-slate-200 flex shadow-sm">
-                <button
-                    onClick={() => setActiveTab("highlights")}
-                    className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-                        activeTab === "highlights" ? "text-teal-600 border-b-2 border-teal-600" : "text-slate-500 hover:text-slate-700"
-                    }`}>
-                    Highlights
-                </button>
-                <button
-                    onClick={() => setActiveTab("upcoming")}
-                    className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-                        activeTab === "upcoming" ? "text-teal-600 border-b-2 border-teal-600" : "text-slate-500 hover:text-slate-700"
-                    }`}>
-                    Upcoming
-                </button>
-            </div>
-
             {/* Sports Filter */}
             <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto border-b border-slate-200 shadow-sm">
                 {spoortOdds !== null &&
                     spoortOdds.length > 0 &&
                     spoortOdds.map((sp) => (
                         <button
+                            key={sp.term_key}
                             onClick={() => {
                                 setActiveSport(sp.term_key);
                                 setCountryLeagues("");
                                 setPPalLeague("");
                                 setPpalLeguesByCountry(sp.ppal_leagues_by_country);
                                 setPpalLegues([]);
+                                setLiveDataMatch([]);
                             }}
                             className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
                                 activeSport === sp.term_key
@@ -258,9 +258,11 @@ export const HomePage = (): JSX.Element => {
                     ppalLeaguesByCountry.length > 0 &&
                     ppalLeaguesByCountry.map((sp) => (
                         <button
+                            key={sp.term_key}
                             onClick={() => {
                                 setCountryLeagues(sp.term_key);
                                 setPPalLeague("");
+                                setLiveDataMatch([]);
                                 if (sp.ppal_leagues !== null) {
                                     setPpalLegues(sp.ppal_leagues);
                                 } else {
@@ -288,6 +290,7 @@ export const HomePage = (): JSX.Element => {
                     ppalLeagues.length > 0 &&
                     ppalLeagues.map((ppl) => (
                         <button
+                            key={ppl.term_key}
                             onClick={() => {
                                 setPPalLeague(ppl.term_key);
                                 callMatchesByLeague(activeSport, countryLeagues, ppl.term_key);
@@ -314,7 +317,9 @@ export const HomePage = (): JSX.Element => {
                                             <div className="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></div>
                                             <span className="text-xs text-slate-600 truncate font-medium">{match.group}</span>
                                         </div>
-                                        <span className="text-xs font-semibold text-orange-600 whitespace-nowrap ml-2">{match.match_start_string}</span>
+                                        <span className="text-xs font-semibold text-orange-600 whitespace-nowrap ml-2">
+                                            {new Date(match.match_start).toLocaleString()}
+                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="flex-1 min-w-0">
@@ -327,7 +332,7 @@ export const HomePage = (): JSX.Element => {
                                                 match.best_offers[0].outcomes.map((odd) => (
                                                     <button
                                                         key={odd.data}
-                                                        className="bg-slate-100 hover:bg-gradient-to-br hover:from-teal-50 hover:to-cyan-50 hover:border-teal-300 border border-slate-200 px-2 sm:px-4 py-2 rounded-lg text-sm font-bold min-w-[50px] sm:min-w-[60px] transition-all">
+                                                        className="bg-slate-100 sm:bg-black hover:bg-gradient-to-br hover:from-teal-50 hover:to-cyan-50 hover:border-teal-300 border border-slate-200 px-2 sm:px-4 py-2 rounded-lg text-sm font-bold min-w-[50px] sm:min-w-[60px] transition-all">
                                                         <div className="text-xs text-slate-500 mb-0.5">
                                                             {odd.data} {odd.line == null ? "" : odd.line / 1000}
                                                         </div>

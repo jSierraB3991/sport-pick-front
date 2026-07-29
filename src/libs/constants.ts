@@ -1,6 +1,7 @@
 const TOKEN_TOKEN: string = "token_token";
 const TOKEN_EXPIRED_IN: string = "token_expired_in";
 const TOKEN_ROLE: string = "token_role";
+const TOKEN_REFRESH_TOKEN: string = "token_refresh_token";
 const COUNTRY_LOCALSTORAGE: string = "country_local_storage";
 const COUNTRY_SELECT: string = "country_selected";
 
@@ -17,6 +18,7 @@ export {
     TOKEN_ROLE,
     TOKEN_TOKEN,
     COUNTRY_LOCALSTORAGE,
+    TOKEN_REFRESH_TOKEN,
     COUNTRY_SELECT,
     ROUTE_ADMIN_HOME,
     ROUTE_USER_HOME,

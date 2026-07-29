@@ -11,7 +11,6 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
     // TODO: Implementar lógica de autenticación real
     const isAuthenticated = getToken();
-    console.log("isAuthenticated", isAuthenticated);
     let userManual = "";
     const userRole = getRoleUser();
     if (userRole == ROLE_ADMIN) {
@@ -19,10 +18,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     } else if (userRole == ROLE_USER) {
         userManual = "user";
     }
-
-    console.log("userRole ", userRole);
-    console.log("tokenRole ", getRoleUser());
-    console.log("requiredRole ", requiredRole);
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
