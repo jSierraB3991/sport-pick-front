@@ -27,7 +27,8 @@ const LoginPage: React.FC = () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             const dataApiRes = await LoginApi({ email, password, rememberMe });
             saveDataUser(dataApiRes);
-            const dasshboardRoute = dataApiRes.role == "ADMIN" ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
+            const dasshboardRoute = dataApiRes.role == ROLE_ADMIN ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
+            console.log("dasshboardRoute", dasshboardRoute);
             navigate(dasshboardRoute);
         } catch (error) {
             let message = "";

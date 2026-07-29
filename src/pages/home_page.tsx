@@ -45,6 +45,9 @@ export const HomePage = (): JSX.Element => {
     ];
 
     const disconnectMatchLive = () => {
+        console.log("disconnect");
+        console.log(wsRef.current);
+        wsRef.current?.send("unregister");
         wsRef.current?.close();
         wsRef.current = null;
     };
@@ -151,7 +154,7 @@ export const HomePage = (): JSX.Element => {
         fetchData();
         getMatchInLive();
         return () => {
-            disconnectMatchLive(); // cerrar al desmontar
+            //disconnectMatchLive(); // cerrar al desmontar
         };
     }, []);
 

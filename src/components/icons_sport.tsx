@@ -14,6 +14,14 @@ const sportIcons: Record<string, string> = {
     cricket: "🦗",
     darts: "🎯",
     motorsports: "🏍️",
+    formula_1: "🏁",
+    american_football: "🏈",
+    golf: "⛳",
+    winter_olympic_games: "⛷",
+    winter_sports: "🎿",
+    rugby_league: "🏉",
+    rugby_union: "🏉",
+    lacrosse: "🥍",
     default: "",
 };
 

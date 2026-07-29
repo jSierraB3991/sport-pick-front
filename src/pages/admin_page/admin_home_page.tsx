@@ -1,12 +1,13 @@
 // pages/user/Home.tsx
 import React, { useEffect, useState } from "react";
-import { ChevronRight, User } from "lucide-react";
+import { ChevronRight, Home, Spline, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserResponse } from "../../models/user_models";
 import { useToast } from "../../contexts/tast_contexts";
 import { getUserDataApi } from "../../api/user_api";
 import { getToken } from "../../libs/token_data";
 import LoadingBarComponent from "../../components/loading_bar_component";
+import { updateBetDataApi } from "../../api/admin_api";
 
 const AdminHomnePage: React.FC = () => {
     const { showToast } = useToast();
@@ -44,6 +45,14 @@ const AdminHomnePage: React.FC = () => {
             });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const refreshBetData = async () => {
+        try {
+            await updateBetDataApi();
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -106,6 +115,13 @@ const AdminHomnePage: React.FC = () => {
                             );
                         })}
                     </div>
+
+                    <button
+                        onClick={refreshBetData}
+                        className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg w-full sm:w-auto">
+                        <Spline size={20} />
+                        Ir al inicio
+                    </button>
                 </div>
             </div>
         </>

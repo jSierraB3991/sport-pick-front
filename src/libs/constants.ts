@@ -7,10 +7,10 @@ const COUNTRY_SELECT: string = "country_selected";
 const ROUTE_ADMIN_HOME: string = "/admin/home";
 const ROUTE_USER_HOME: string = "/user/home";
 
-const ROLE_ADMIN: string = "ROLE_ADMIN";
-const ROLE_USER: string = "ROLE_USER";
+const ROLE_ADMIN: string = "ROLE_USER";
+const ROLE_USER: string = "USER_PICK_ROLE";
 
-const TENAT_APP_KEY = "sport-pick-app";
+const TENAT_APP_KEY = "sport_picks";
 
 export {
     TOKEN_EXPIRED_IN,

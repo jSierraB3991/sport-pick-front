@@ -33,8 +33,8 @@ const CountriesAdminPage: FC = () => {
         setIsLoading(true);
         try {
             const data = await getCountriesBySportApi(Number(sport));
-            setInitialData(data);
-            setCountryData(data);
+            setInitialData(data || []);
+            setCountryData(data || []);
         } catch (error) {
             let message = "";
             if (error instanceof Error && "response" in error) {
