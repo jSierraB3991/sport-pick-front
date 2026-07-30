@@ -9,7 +9,7 @@ type InfoRowProps = {
 };
 
 const InfoRowComponent = ({ label, value, onChange, last = false, type = "text", placeholder, disabled = false }: InfoRowProps) => (
-    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-4 ${!last ? "border-b border-slate-700" : ""}`}>
+    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-2 py-2 ${!last ? "border-b border-slate-700" : ""}`}>
         <span className="text-slate-400 text-sm sm:w-40">{label}</span>
 
         <input

@@ -97,9 +97,9 @@ const UserHomePage: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <h1 className="text-3xl font-bold text-white mb-2">
+                        <h2 className="text-3xl font-bold text-white mb-2">
                             Hola, <span className="text-teal-400">{userData?.first_name}</span>
-                        </h1>
+                        </h2>
                     </div>
 
                     {/* Card de Saldos */}
