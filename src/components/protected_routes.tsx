@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { getRoleUser, getToken } from "../libs/token_data";
-import { ROLE_ADMIN, ROLE_USER } from "../libs/constants";
+import { ROLE_ADMIN, ROLE_USER, ROUTE_CONST } from "../libs/constants";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
         userManual = "user";
     }
 
-    const roouteLogin = `/login?route=${location.pathname}`;
+    const roouteLogin = `/login?${ROUTE_CONST}=${location.pathname}`;
 
     if (!isAuthenticated) {
         return <Navigate to={roouteLogin} replace />;

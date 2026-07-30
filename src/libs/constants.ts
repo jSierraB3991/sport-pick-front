@@ -13,6 +13,8 @@ const ROLE_USER: string = "USER_PICK_ROLE";
 
 const TENAT_APP_KEY = "sport_picks";
 
+const ROUTE_CONST: string = "route";
+
 export {
     TOKEN_EXPIRED_IN,
     TOKEN_ROLE,
@@ -25,4 +27,5 @@ export {
     ROLE_ADMIN,
     ROLE_USER,
     TENAT_APP_KEY,
+    ROUTE_CONST,
 };

@@ -5,7 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { LoginApi } from "../api/oauth";
 import { useToast } from "../contexts/tast_contexts";
 import { getRoleUser, getToken, saveDataUser } from "../libs/token_data";
-import { ROLE_ADMIN, ROUTE_ADMIN_HOME, ROUTE_USER_HOME } from "../libs/constants";
+import { ROLE_ADMIN, ROUTE_ADMIN_HOME, ROUTE_CONST, ROUTE_USER_HOME } from "../libs/constants";
 import LoadingBarComponent from "../components/loading_bar_component";
 
 const LoginPage: React.FC = () => {
@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             const dataApiRes = await LoginApi({ email, password, rememberMe });
             saveDataUser(dataApiRes);
-            const routeRedirection = searchParams.get("route");
+            const routeRedirection = searchParams.get(ROUTE_CONST);
             if (routeRedirection && routeRedirection !== "") {
                 navigate(routeRedirection!);
             } else {
