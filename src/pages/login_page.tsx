@@ -1,6 +1,6 @@
 // pages/auth/Login.tsx
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginApi } from "../api/oauth";
 import { useToast } from "../contexts/tast_contexts";
@@ -17,6 +17,7 @@ const LoginPage: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,8 +28,13 @@ const LoginPage: React.FC = () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             const dataApiRes = await LoginApi({ email, password, rememberMe });
             saveDataUser(dataApiRes);
-            const dasshboardRoute = dataApiRes.role == ROLE_ADMIN ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
-            navigate(dasshboardRoute);
+            const routeRedirection = searchParams.get("route");
+            if (routeRedirection && routeRedirection !== "") {
+                navigate(routeRedirection!);
+            } else {
+                const dasshboardRoute = dataApiRes.role == ROLE_ADMIN ? ROUTE_ADMIN_HOME : ROUTE_USER_HOME;
+                navigate(dasshboardRoute);
+            }
         } catch (error) {
             let message = "";
             if (error instanceof Error && "response" in error) {
