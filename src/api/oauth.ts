@@ -21,7 +21,7 @@ const UpdateUserApi = async (formData: UserUpdate) => {
 };
 
 const refreshToken = async (tokenRefresh: string): Promise<JwtResponse> => {
-    const data = await instance.post<JwtResponse>("/auth/refresh", {
+    const data = await instance.post<JwtResponse>("/public/refresh-token", {
         refresh_token: tokenRefresh,
     });
 

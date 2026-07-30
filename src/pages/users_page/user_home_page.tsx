@@ -1,9 +1,8 @@
 // pages/user/Home.tsx
 import React, { useEffect, useState } from "react";
 import { ChevronRight, User, Settings, BarChart3, Download, LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { formatCurrency } from "../../libs/util";
-import { getToken } from "../../libs/token_data";
 import { useToast } from "../../contexts/tast_contexts";
 import LoadingBarComponent from "../../components/loading_bar_component";
 import { getUserDataApi } from "../../api/user_api";
@@ -11,7 +10,6 @@ import { UserResponse } from "../../models/user_models";
 
 const UserHomePage: React.FC = () => {
     const { showToast } = useToast();
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [userData, setUserData] = useState<UserResponse>();
 
@@ -73,11 +71,6 @@ const UserHomePage: React.FC = () => {
     };
 
     useEffect(() => {
-        const toke = getToken();
-        if (toke === "") {
-            navigate("/login");
-            return;
-        }
         fetchData();
     }, []);
 

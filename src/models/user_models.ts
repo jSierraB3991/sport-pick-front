@@ -2,7 +2,7 @@ export interface UserResponse {
     email: string;
     earnings: number;
     country_name: string;
-    country: string;
+    country: number;
     indicative: string;
     cellphone: string;
     user_code: string;

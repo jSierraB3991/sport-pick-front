@@ -14,6 +14,7 @@ import UserHomePage from "./pages/users_page/user_home_page.tsx";
 import NotFoundPage from "./pages/not_found_page.tsx";
 import AdminSportPage from "./pages/admin_page/sports_admin_page.tsx";
 import CountriesAdminPage from "./pages/admin_page/countries_admin_page.tsx";
+import PersonalDataPage from "./pages/users_page/personal_data_page.tsx";
 
 function App() {
     const RouterComponent = BrowserRouter;
@@ -39,6 +40,7 @@ function App() {
                         }>
                         <Route index element={<Navigate to="/user/home" replace />} />
                         <Route path="home" element={<UserHomePage />} />
+                        <Route path="personal-data" element={<PersonalDataPage />} />
                     </Route>
                     {/* Admin Dashboard Routes */}
                     <Route
