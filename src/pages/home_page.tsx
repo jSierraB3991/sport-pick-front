@@ -108,7 +108,6 @@ export const HomePage = (): JSX.Element => {
                 }
             }
         } catch (error) {
-            console.log(error);
             let message = "";
             if (error instanceof Error && "response" in error) {
                 const axiosError = error as any;

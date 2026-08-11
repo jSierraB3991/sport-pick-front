@@ -21,10 +21,10 @@ const UserHomePage: React.FC = () => {
             path: "/user/personal-data",
         },
         {
-            id: "config",
+            id: "challenges",
             icon: Settings,
-            label: "Configuración",
-            path: "/user/configuration",
+            label: "Mis Desafios",
+            path: "/user/challenges",
         },
         {
             id: "stats",

@@ -25,7 +25,6 @@ const CountriesAdminPage: FC = () => {
     };
 
     const toggleSport = (sportId: number) => {
-        console.log(initialData);
         setCountryData((prevData) => prevData.map((sport) => (sport.id === sportId ? { ...sport, is_available: !sport.is_available } : sport)));
     };
 
